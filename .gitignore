@@ -1,0 +1,36 @@
+# Ignorar carpetas de compilación y distribución
+build/
+dist/
+
+# Ignorar archivos compilados y empaquetados
+*.class
+*.jar
+*.war
+
+# Ignorar librerías externas (si no son propias)
+lib/
+
+# Ignorar archivos temporales y de sistema
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Archivos del IDE NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+.netbeans/
+
+# Archivos del IDE JetBrains (por si alguien usa IntelliJ)
+.idea/
+*.iml
+
+# Archivos de respaldo o temporales
+*~
+*.bak
+
+# Ignorar carpetas de test si no se usan
+test/
