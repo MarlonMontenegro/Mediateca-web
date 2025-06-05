@@ -7,6 +7,7 @@ public abstract class Usuario {
     private String usuario;
     private String contrasena;
     private RolUsuario rol;
+    private boolean activo; 
 
     public Usuario() {
     }
@@ -15,6 +16,7 @@ public abstract class Usuario {
         this.usuario = usuario;
         this.contrasena = contrasena;
         this.rol = rol;
+        this.activo = true; 
     }
 
     public Usuario(int id, String usuario, String contrasena, RolUsuario rol) {
@@ -22,6 +24,7 @@ public abstract class Usuario {
         this.usuario = usuario;
         this.contrasena = contrasena;
         this.rol = rol;
+        this.activo = true;
     }
 
     public int getId() {
@@ -55,6 +58,14 @@ public abstract class Usuario {
     public void setRol(RolUsuario rol) {
         this.rol = rol;
     }
+    
+    public boolean isActivo() {
+        return activo;
+    }
 
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+    
     public abstract String redirect();
 }

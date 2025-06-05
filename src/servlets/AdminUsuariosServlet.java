@@ -20,9 +20,16 @@ public class AdminUsuariosServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String form = req.getParameter("form");
+
+        if ("nuevo".equals(form)) {
+            req.getRequestDispatcher("/WEB-INF/views/admin/formUsuario.jsp").forward(req, resp);
+            return;
+        }
+
         List<Usuario> usuarios = controller.listarUsuarios();
         req.setAttribute("usuarios", usuarios);
-        req.getRequestDispatcher("/WEB-INF/admin/usuarios.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/admin/usuarios.jsp").forward(req, resp);
     }
 
     @Override
@@ -35,13 +42,16 @@ public class AdminUsuariosServlet extends HttpServlet {
             String rol = req.getParameter("rol");
 
             Usuario nuevoUsuario;
-            if ("ALUMNO".equals(rol)) {
-                nuevoUsuario = new Alumno(usuario, contrasena, RolUsuario.ALUMNO);
-            } else if ("PROFESOR".equals(rol)) {
-                nuevoUsuario = new Profesor(usuario, contrasena, RolUsuario.PROFESOR);
-            } else {
-                nuevoUsuario = new Alumno(usuario, contrasena, RolUsuario.ALUMNO);
-            }
+            if ("ALUMNO".equalsIgnoreCase(rol)) {
+    nuevoUsuario = new Alumno(usuario, contrasena, RolUsuario.ALUMNO);
+} else if ("PROFESOR".equalsIgnoreCase(rol)) {
+    nuevoUsuario = new Profesor(usuario, contrasena, RolUsuario.PROFESOR);
+} else if ("ADMIN".equalsIgnoreCase(rol)) {
+    nuevoUsuario = new model.Admin(usuario, contrasena, RolUsuario.ADMIN);
+} else {
+    // Default a ALUMNO si no coincide
+    nuevoUsuario = new Alumno(usuario, contrasena, RolUsuario.ALUMNO);
+}
 
             controller.crearUsuario(nuevoUsuario);
             resp.sendRedirect("usuarios");
@@ -57,4 +67,3 @@ public class AdminUsuariosServlet extends HttpServlet {
         }
     }
 }
-

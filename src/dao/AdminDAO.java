@@ -13,48 +13,48 @@ public class AdminDAO implements UserDAO {
 
     private static final Logger logger = LogManager.getLogger(CDDAO.class);
 
-    @Override
-    public boolean crearUsuario(Usuario usuario) {
 
-        String sql = "INSERT INTO usuarios (usuario,contrasena,rol) VALUES (?,?,?)";
+@Override
+public boolean crearUsuario(Usuario usuario) {
+    String sql = "INSERT INTO usuarios (usuario, contrasena, rol, estado) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-             stmt.setString(1, usuario.getUsuario());
-             stmt.setString(2, usuario.getContrasena());
-             stmt.setString(3,usuario.getRol().name());
-             stmt.executeUpdate();
+        stmt.setString(1, usuario.getUsuario());
+        stmt.setString(2, usuario.getContrasena());
+        stmt.setString(3, usuario.getRol().name());
+        stmt.setBoolean(4, usuario.isActivo()); // Nuevo
 
-             return true;
+        stmt.executeUpdate();
+        return true;
 
-        } catch (SQLException e) {
-            logger.error("Error al agregar un nuevo Usuario: " + e.getMessage(), e);
-            return false;
-        }
+    } catch (SQLException e) {
+        logger.error("Error al agregar un nuevo Usuario: " + e.getMessage(), e);
+        return false;
     }
+}
 
-    @Override
-    public Usuario obtenerPorId(int id) {
+@Override
+public Usuario obtenerPorId(int id) {
+    String sql = "SELECT * FROM usuarios WHERE id_usuario = ?"; // Arreglado
 
-        String sql = "SELECT * FROM usuarios WHERE usuario = ?";
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-               return obtenerUsuario(rs);
-            }
-
-        } catch (SQLException e) {
-            logger.error("Error al obtener usuario por ID: " + e.getMessage(), e);
-            throw new RuntimeException(e);
+        if (rs.next()) {
+            return obtenerUsuario(rs);
         }
-        return null;
+
+    } catch (SQLException e) {
+        logger.error("Error al obtener usuario por ID: " + e.getMessage(), e);
+        throw new RuntimeException(e);
     }
+    return null;
+}
 
     @Override
     public List<Usuario> listarTodos() {
@@ -115,16 +115,20 @@ public class AdminDAO implements UserDAO {
     }
 
 
-    private Usuario obtenerUsuario(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id_usuario");
-        String usuario = rs.getString("usuario");
-        String contrasena = rs.getString("contrasena");
-        RolUsuario rol = RolUsuario.valueOf(rs.getString("rol"));
+private Usuario obtenerUsuario(ResultSet rs) throws SQLException {
+    int id = rs.getInt("id_usuario");
+    String usuario = rs.getString("usuario");
+    String contrasena = rs.getString("contrasena");
+    RolUsuario rol = RolUsuario.valueOf(rs.getString("rol"));
+    boolean activo = rs.getBoolean("estado");
 
-        return switch (rol) {
-            case ADMIN  -> new Admin(id,usuario,contrasena,rol);
-            case PROFESOR -> new Profesor(id,usuario,contrasena,rol);
-            case ALUMNO -> new Alumno(id,usuario,contrasena,rol);
-        };
-    }
+    Usuario user = switch (rol) {
+        case ADMIN -> new model.Admin(id, usuario, contrasena, rol);
+        case PROFESOR -> new model.Profesor(id, usuario, contrasena, rol);
+        case ALUMNO -> new model.Alumno(id, usuario, contrasena, rol);
+    };
+
+    user.setActivo(activo); // Agregado
+    return user;
+}
 }

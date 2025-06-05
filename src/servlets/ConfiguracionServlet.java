@@ -7,6 +7,7 @@ import jakarta.servlet.http.*;
 import model.ConfiguracionSistema;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/configuracion")
 public class ConfiguracionServlet extends HttpServlet {
@@ -16,33 +17,53 @@ public class ConfiguracionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ConfiguracionSistema config = controller.obtenerConfiguracion();
-        request.setAttribute("configuracion", config);
-        request.getRequestDispatcher("/configuracion.jsp").forward(request, response);
+
+        List<ConfiguracionSistema> configuraciones = controller.obtenerTodas();
+        request.setAttribute("configuraciones", configuraciones);
+        request.getRequestDispatcher("/WEB-INF/views/admin/configuracion.jsp").forward(request, response);
     }
 
+    
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
+    String[] ids = request.getParameterValues("id[]");
+    String[] tipos = request.getParameterValues("tipoUsuario[]");
+    String[] ejemplares = request.getParameterValues("ejemplaresMaximos[]");
+    String[] moras = request.getParameterValues("moraDiaria[]");
+
+    boolean exito = true;
+
+    for (int i = 0; i < ids.length; i++) {
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            int ejemplaresMaximos = Integer.parseInt(request.getParameter("ejemplaresMaximos"));
-            double moraDiaria = Double.parseDouble(request.getParameter("moraDiaria"));
+            int id = Integer.parseInt(ids[i]);
+            String tipo = tipos[i];
+            int ejemplaresMax = Integer.parseInt(ejemplares[i]);
+            double mora = Double.parseDouble(moras[i]);
 
-            ConfiguracionSistema config = new ConfiguracionSistema(id, ejemplaresMaximos, moraDiaria);
-            boolean actualizado = controller.actualizarConfiguracion(config);
-
-            if (actualizado) {
-                request.setAttribute("mensaje", "Configuración actualizada correctamente.");
-            } else {
-                request.setAttribute("error", "No se pudo actualizar la configuración.");
+            ConfiguracionSistema config = new ConfiguracionSistema(id, tipo, ejemplaresMax, mora);
+            if (!controller.actualizarConfiguracion(config)) {
+                exito = false;
             }
 
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Error en el formato de los datos.");
+        } catch (Exception e) {
+            exito = false;
+            request.setAttribute("error", "Error procesando los datos: " + e.getMessage());
+            break;
         }
-
-        doGet(request, response);
     }
+
+    if (exito) {
+        request.setAttribute("mensaje", "Configuraciones actualizadas correctamente.");
+    } else {
+        request.setAttribute("error", "Ocurrió un error al actualizar.");
+    }
+
+    doGet(request, response); // recarga la vista con datos actualizados
+}
+
+    
+    
+    
 }
