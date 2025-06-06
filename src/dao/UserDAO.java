@@ -11,6 +11,7 @@ public interface UserDAO {
     List<Usuario> listarTodos();
     boolean cambiarContrasena(int id, String nuevaClave);
     boolean desactivarUsuario(int id);
-
+    boolean activarUsuario(int id);
+    void actualizar(Usuario usuario);
 
 }

@@ -22,13 +22,28 @@
 </nav>
 
 <div class="container mt-4">
+
+    <!-- Mensajes -->
+    <c:if test="${param.mensaje == 'activado'}">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ✅ Usuario activado correctamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    </c:if>
+    <c:if test="${param.mensaje == 'desactivado'}">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            ⚠️ Usuario desactivado correctamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    </c:if>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Usuarios del sistema</h4>
         <div>
             <a href="${pageContext.request.contextPath}/configuracion" class="btn btn-outline-secondary me-2">
                 <i class="bi bi-gear"></i> Configuración
             </a>
-            <a href="usuarios?form=nuevo" class="btn btn-primary">
+            <a href="${pageContext.request.contextPath}/admin/usuarios?form=nuevo" class="btn btn-primary">
                 <i class="bi bi-person-plus-fill"></i> Agregar Usuario
             </a>
         </div>
@@ -63,13 +78,24 @@
                                     <input type="hidden" name="accion" value="desactivar">
                                     <input type="hidden" name="id" value="${u.id}">
                                     <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="bi bi-x-circle"></i> Eliminar
+                                        <i class="bi bi-x-circle"></i> Desactivar
                                     </button>
                                 </form>
                             </c:if>
-                            <a href="usuarios.jsp?edit=${u.id}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </a>
+
+                            <c:if test="${!u.activo}">
+                                <form action="usuarios" method="post" style="display:inline;">
+                                    <input type="hidden" name="accion" value="activar">
+                                    <input type="hidden" name="id" value="${u.id}">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-check-circle"></i> Activar
+                                    </button>
+                                </form>
+                            </c:if>
+
+<a href="${pageContext.request.contextPath}/admin/usuarios?edit=${u.id}" class="btn btn-sm btn-warning">
+    <i class="bi bi-pencil-square"></i> Editar
+</a>
                         </td>
                     </tr>
                 </c:forEach>
@@ -77,7 +103,6 @@
         </table>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,8 +1,7 @@
- package controllers;
+package controllers;
 
 import dao.AdminDAO;
 import model.Usuario;
-
 import java.util.List;
 
 public class AdminController {
@@ -27,5 +26,13 @@ public class AdminController {
 
     public boolean desactivarUsuario(int id) {
         return adminDAO.desactivarUsuario(id);
+    }
+
+    public boolean activarUsuario(int id) {
+        return adminDAO.activarUsuario(id);
+    }
+
+    public void actualizarUsuario(Usuario usuario) {
+        adminDAO.actualizar(usuario);
     }
 }

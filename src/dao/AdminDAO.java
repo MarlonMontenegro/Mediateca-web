@@ -113,6 +113,25 @@ public Usuario obtenerPorId(int id) {
             throw new RuntimeException(e);
         }
     }
+    
+    
+@Override
+public boolean activarUsuario(int id) {
+    String sql = "UPDATE usuarios SET estado = true WHERE id_usuario = ?";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, id);
+        stmt.executeUpdate();
+
+        return true;
+
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+}
+
 
 
 private Usuario obtenerUsuario(ResultSet rs) throws SQLException {
@@ -131,4 +150,27 @@ private Usuario obtenerUsuario(ResultSet rs) throws SQLException {
     user.setActivo(activo); // Agregado
     return user;
 }
+
+
+
+@Override
+public void actualizar(Usuario usuario) {
+    String sql = "UPDATE usuarios SET usuario = ?, contrasena = ?, rol = ? WHERE id_usuario = ?";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, usuario.getUsuario());
+        stmt.setString(2, usuario.getContrasena());
+        stmt.setString(3, usuario.getRol().toString());
+        stmt.setInt(4, usuario.getId());
+
+        stmt.executeUpdate();
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
 }
+
+}
+
