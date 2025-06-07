@@ -55,5 +55,4 @@ public class Libro extends MaterialEscrito {
     public String generarCodigo() {
         return "LIB" + String.format("%05d", (int) (Math.random() * 100000));
     }
-
 }

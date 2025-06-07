@@ -43,6 +43,9 @@
             <a href="${pageContext.request.contextPath}/configuracion" class="btn btn-outline-secondary me-2">
                 <i class="bi bi-gear"></i> Configuración
             </a>
+            <a href="${pageContext.request.contextPath}/materiales?form=nuevo" class="btn btn-success me-2">
+                <i class="bi bi-journal-plus"></i> Agregar Material
+            </a>
             <a href="${pageContext.request.contextPath}/admin/usuarios?form=nuevo" class="btn btn-primary">
                 <i class="bi bi-person-plus-fill"></i> Agregar Usuario
             </a>
@@ -93,9 +96,9 @@
                                 </form>
                             </c:if>
 
-<a href="${pageContext.request.contextPath}/admin/usuarios?edit=${u.id}" class="btn btn-sm btn-warning">
-    <i class="bi bi-pencil-square"></i> Editar
-</a>
+                            <a href="${pageContext.request.contextPath}/admin/usuarios?edit=${u.id}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
                         </td>
                     </tr>
                 </c:forEach>
@@ -105,7 +108,7 @@
 
     <div class="mt-4">
         <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-secondary">
-            ← Volver
+            ← Volver al Menú Principal
         </a>
     </div>
 </div>
